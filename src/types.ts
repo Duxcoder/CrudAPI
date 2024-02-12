@@ -11,6 +11,6 @@ export interface Users {
 }
 
 export interface Result {
-  status: 400 | 404 | 200 | 201;
+  status: 400 | 404 | 200 | 201 | 204;
   content: string | User | Users;
 }
