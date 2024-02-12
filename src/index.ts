@@ -1,5 +1,5 @@
 import * as http from 'node:http';
-import { getRequests, postRequest } from './requests.ts';
+import { getRequests, postRequest, putRequest } from './requests.ts';
 import { Result } from 'types';
 
 const server = http.createServer((req, res) => {
@@ -24,7 +24,7 @@ const server = http.createServer((req, res) => {
           result = postRequest(JSON.parse(data));
           break;
         case 'PUT':
-          // getRequests(req.url?.trim());
+          result = putRequest(JSON.parse(data), input);
           break;
         case 'DELETE':
           // getRequests(req.url?.trim());

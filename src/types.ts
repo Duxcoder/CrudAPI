@@ -1,8 +1,10 @@
-export interface User {
-  id: string;
+export interface UserBase {
   username: string;
   age: string;
   hobbies: string[];
+}
+export interface User extends UserBase {
+  id: string;
 }
 export interface Users {
   [key: string]: User;
