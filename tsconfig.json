@@ -4,6 +4,8 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "lib": ["ESNext"],
     "module": "CommonJS",
     "moduleResolution": "Node",
