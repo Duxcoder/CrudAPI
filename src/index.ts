@@ -13,7 +13,7 @@ interface Users {
 }
 
 interface Result {
-  status: 400 | 404 | 200;
+  status: 400 | 404 | 200 | 201;
   content: string | User | Users;
 }
 
@@ -60,28 +60,66 @@ const getRequests = (path: string = ''): Result => {
   return { status: 404, content: 'Page is not found' };
 };
 
-const server = http.createServer((req, res) => {
-  let result: Result = { status: 404, content: 'Page is not found' };
-  switch (req.method) {
-    case 'GET':
-      result = getRequests(req.url?.trim());
-      break;
-    case 'POST':
-      // getRequests(req.url?.trim());
-      break;
-    case 'PUT':
-      // getRequests(req.url?.trim());
-      break;
-    case 'DELETE':
-      // getRequests(req.url?.trim());
-      break;
+const postRequest = ({
+  username,
+  age,
+  hobbies,
+}: {
+  username: string;
+  age: string;
+  hobbies: string[];
+}): Result => {
+  if (!username || !age || !hobbies || hobbies.length === 0) {
+    return { status: 400, content: 'Missing required fields' };
   }
 
-  res.writeHead(result.status, {
-    'Content-Type': 'application/json',
+  const user: User = {
+    id: uuidv4(),
+    username,
+    age,
+    hobbies,
+  };
+  users[user.id] = user;
+  return { status: 201, content: user };
+};
+
+const server = http.createServer((req, res) => {
+  let result: Result = { status: 404, content: 'Page is not found' };
+  let body: Buffer[] = [];
+
+  req.on('data', (chunk) => {
+    body.push(chunk);
   });
-  res.statusCode = result.status;
-  res.end(JSON.stringify(result.content));
+
+  req.on('end', async () => {
+    try {
+      const data = Buffer.concat(body).toString('utf-8');
+
+      switch (req.method) {
+        case 'GET':
+          result = getRequests(req.url?.trim());
+          break;
+        case 'POST':
+          result = postRequest(JSON.parse(data));
+          break;
+        case 'PUT':
+          // getRequests(req.url?.trim());
+          break;
+        case 'DELETE':
+          // getRequests(req.url?.trim());
+          break;
+      }
+
+      res.writeHead(result.status, {
+        'Content-Type': 'application/json',
+      });
+      res.statusCode = result.status;
+      res.end(JSON.stringify(result.content));
+    } catch (e) {
+      res.statusCode = 500;
+      res.end(JSON.stringify(`Errors on the server: ${(e as Error).message}`));
+    }
+  });
 });
 
 server.listen(8080, () => {
