@@ -6,6 +6,9 @@ import {
   putRequest,
 } from './requests.ts';
 import { Result } from 'types';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const server = http.createServer((req, res) => {
   let result: Result = { status: 404, content: 'Page is not found' };
@@ -48,6 +51,7 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(8080, () => {
-  console.log('Server started on port 3000');
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log('Server started on port ', port);
 });
